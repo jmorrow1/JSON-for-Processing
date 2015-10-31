@@ -7,8 +7,13 @@ import java.util.List;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
-public interface JSONable<T extends JSONable> {
-	JSONObject toJSON();
+/**
+ * 
+ * @author James Morrow
+ *
+ */
+public interface JSONable {
+	public JSONObject toJSON();
 	
 	default int[] toIntArray(JSONArray j) {
 		int[] array = new int[j.size()]; 
@@ -26,6 +31,14 @@ public interface JSONable<T extends JSONable> {
 		return array;
 	}
 	
+	default double[] toDoubleArray(JSONArray j) {
+		double[] array = new double[j.size()];
+		for (int i=0; i<array.length; i++) {
+			array[i] = j.getDouble(i);
+		}
+		return array;
+	}
+	
 	default boolean[] toBooleanArray(JSONArray j) {
 		boolean[] array = new boolean[j.size()];
 		for (int i=0; i<array.length; i++) {
@@ -34,10 +47,50 @@ public interface JSONable<T extends JSONable> {
 		return array;
 	}
 	
+	default String[] toStringArray(JSONArray j) {
+		String[] array = new String[j.size()];
+		for (int i=0; i<array.length; i++) {
+			array[i] = j.getString(i);
+		}
+		return array;
+	}
+	
+	default ArrayList<Integer> toIntArrayList(JSONArray j) {
+		ArrayList<Integer> alist = new ArrayList<Integer>(j.size());
+		for (int i=0; i<j.size(); i++) {
+			alist.add(j.getInt(i));
+		}
+		return alist;
+	}
+	
 	default ArrayList<Float> toFloatArrayList(JSONArray j) {
 		ArrayList<Float> alist = new ArrayList<Float>(j.size());
 		for (int i=0; i<j.size(); i++) {
 			alist.add(j.getFloat(i));
+		}
+		return alist;
+	}
+	
+	default ArrayList<Double> toDoubleArrayList(JSONArray j) {
+		ArrayList<Double> alist = new ArrayList<Double>(j.size());
+		for (int i=0; i<j.size(); i++) {
+			alist.add(j.getDouble(i));
+		}
+		return alist;
+	}
+	
+	default ArrayList<Boolean> toBooleanArrayList(JSONArray j) {
+		ArrayList<Boolean> alist = new ArrayList<Boolean>(j.size());
+		for (int i=0; i<j.size(); i++) {
+			alist.add(j.getBoolean(i));
+		}
+		return alist;
+	}
+	
+	default ArrayList<String> toStringArrayList(JSONArray j) {
+		ArrayList<String> alist = new ArrayList<String>(j.size());
+		for (int i=0; i<j.size(); i++) {
+			alist.add(j.getString(i));
 		}
 		return alist;
 	}
