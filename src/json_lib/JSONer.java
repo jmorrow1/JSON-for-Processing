@@ -1,6 +1,9 @@
 package json_lib;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 
 import processing.data.JSONObject;
 
@@ -10,8 +13,8 @@ import processing.data.JSONObject;
  *
  */
 
-//TODO: add loading of non-primitive fields
 //TODO: order if-statements that check for field types by use frequency
+//TODO: go back and be more thoughtful about exception handling
 //ISSUE: if a subclass has a field of the same name as its superclass, only the superclass field gets saved. 
 //I know why this happens, but the question is what to do about it.
 
@@ -50,6 +53,25 @@ public abstract class JSONer implements JSONable {
 					}
 					else if (fields[i].getType() == String.class) {
 						fields[i].set(this, json.getString(fields[i].getName()));
+					}
+					else {
+						Class fieldType = fields[i].getType();
+						if (JSONer.class.isAssignableFrom(fieldType)) {
+							JSONObject nestedJSONObject = json.getJSONObject(fieldType.getName());
+							if (nestedJSONObject != null) {
+								Constructor fieldCons = null;
+								try {
+									fieldCons = fieldType.getConstructor(JSONObject.class);
+								} catch (NoSuchMethodException | SecurityException e) {
+									e.printStackTrace();
+								}
+								try {
+									fields[i].set(this, fieldCons.newInstance(json.getJSONObject(fieldType.getName())));
+								} catch (IllegalArgumentException | InstantiationException | InvocationTargetException e) {
+									e.printStackTrace();
+								}
+							}
+						}
 					}
 					fields[i].setAccessible(false);
 				}
@@ -107,9 +129,6 @@ public abstract class JSONer implements JSONable {
 					if (value != null) {
 						JSONObject nestedJSONObject = toJSON(value);
 						json.setJSONObject(fields[i].getName(), nestedJSONObject);
-					}
-					else {
-						json.setJSONObject(fields[i].getName(), null);
 					}
 				}
 			}
