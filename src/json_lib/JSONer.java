@@ -10,7 +10,7 @@ import processing.data.JSONObject;
  *
  */
 
-//TODO: add saving and loading of non-primitive fields
+//TODO: add loading of non-primitive fields
 //TODO: order if-statements that check for field types by use frequency
 //ISSUE: if a subclass has a field of the same name as its superclass, only the superclass field gets saved. 
 //I know why this happens, but the question is what to do about it.
@@ -63,49 +63,53 @@ public abstract class JSONer implements JSONable {
 
 	@Override
 	public JSONObject toJSON() {
+		return toJSON(this);
+	}
+	
+	private static JSONObject toJSON(Object obj) {
 		JSONObject json = new JSONObject();
 		
 		//write the values of the this class's declared fields to the json object.	
-		Class c = this.getClass();
+		Class c = obj.getClass();
 		while (c != JSONer.class) {
 			Field[] fields = c.getDeclaredFields();
 			
 			for (int i=0; i<fields.length; i++) {
 				if (fields[i].getType() == char.class) {
-					json.setString(fields[i].getName(), getValue(fields[i]).toString());
+					json.setString(fields[i].getName(), getValue(obj, fields[i]).toString());
 				}
 				else if (fields[i].getType() == short.class) {
-					json.setInt(fields[i].getName(), (int)((short)getValue(fields[i])));
+					json.setInt(fields[i].getName(), (int)((short)getValue(obj, fields[i])));
 				}
 				else if (fields[i].getType() == int.class) {
-					json.setInt(fields[i].getName(), (int)getValue(fields[i]));
+					json.setInt(fields[i].getName(), (int)getValue(obj, fields[i]));
 				}
 				else if (fields[i].getType() == byte.class) {
-					json.setInt(fields[i].getName(), (int)((byte)getValue(fields[i])));
+					json.setInt(fields[i].getName(), (int)((byte)getValue(obj, fields[i])));
 				}
 				else if (fields[i].getType() == long.class) {
-					json.setLong(fields[i].getName(), (long)getValue(fields[i]));
+					json.setLong(fields[i].getName(), (long)getValue(obj, fields[i]));
 				}
 				else if (fields[i].getType() == float.class) {
-					json.setFloat(fields[i].getName(), (float)getValue(fields[i]));
+					json.setFloat(fields[i].getName(), (float)getValue(obj, fields[i]));
 				}
 				else if (fields[i].getType() == double.class) {
-					json.setDouble(fields[i].getName(), (double)getValue(fields[i]));
+					json.setDouble(fields[i].getName(), (double)getValue(obj, fields[i]));
 				}
 				else if (fields[i].getType() == boolean.class) {
-					json.setBoolean(fields[i].getName(), (boolean)getValue(fields[i]));
+					json.setBoolean(fields[i].getName(), (boolean)getValue(obj, fields[i]));
 				}
 				else if (fields[i].getType() == String.class) {
-					json.setString(fields[i].getName(), (String)getValue(fields[i]));
+					json.setString(fields[i].getName(), (String)getValue(obj, fields[i]));
 				}
 				else {
-					Object value = getValue(fields[i]);
-					if (value instanceof JSONer) {
-						JSONObject nestedJSONObject = ((JSONer) value).toJSON();
+					Object value = getValue(obj, fields[i]);
+					if (value != null) {
+						JSONObject nestedJSONObject = toJSON(value);
 						json.setJSONObject(fields[i].getName(), nestedJSONObject);
 					}
 					else {
-						
+						json.setJSONObject(fields[i].getName(), null);
 					}
 				}
 			}
@@ -115,12 +119,12 @@ public abstract class JSONer implements JSONable {
 		return json;
 	}
 	
-	private Object getValue(Field f) {
+	private static Object getValue(Object obj, Field f) {
 		try {
 			f.setAccessible(true);
-			Object obj = f.get(this);
+			Object value = f.get(obj);
 			f.setAccessible(false);
-			return obj;
+			return value;
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 			return null;
