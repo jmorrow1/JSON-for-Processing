@@ -15,7 +15,7 @@ json.setJSONArray("xs", js);
 With this library, you can instead write:
 
 ```java
-json.setJSONArray("xs", Util.jsonify(js));
+json.setJSONArray("xs", Util.jsonify(xs));
 ```
 
 To load an array of floating points from a JSONObject, you would typically write something like this:
