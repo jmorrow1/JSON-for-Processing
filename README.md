@@ -31,7 +31,7 @@ for (int i=0; i<js.size(); i++) {
 With this library, you can instead write:
 
 ```java
-float[] xs = json.toFloatArray(json.getJSONArray("xs"));
+float[] xs = Util.toFloatArray(json.getJSONArray("xs"));
 ```
 
 # JSONer
