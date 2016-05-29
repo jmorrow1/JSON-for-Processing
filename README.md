@@ -2,7 +2,7 @@
 Utilities to make saving and loading in Processing more convenient.
 
 # Code Reduction
-In Processing, to save an array of floating points, xs, to a JSONObject, json, you would write something like:
+In Processing, to save an array of floating points, xs, to a JSONObject, json, you would typically write something like:
 
 ```java
 JSONArray js = new JSONArray();
@@ -12,10 +12,26 @@ for (int i=0; i<xs.length; i++) {
 json.setJSONArray("xs", js);
 ```
 
-With this library, you can write:
+With this library, you can instead write:
 
 ```java
-json.setJSONArray("xs", Util.toFloatArray(js));
+json.setJSONArray("xs", Util.jsonify(js));
+```
+
+To load an array of floating points from a JSONObject, you would typically write something like this:
+
+```java
+JSONArray js = json.getJSONArray("xs");
+float[] xs = new float[js.size()];
+for (int i=0; i<js.size(); i++) {
+    xs[i] = js.getFloat(i);
+}
+```
+
+With this library, you can instead write:
+
+```java
+float[] xs = json.toFloatArray(json.getJSONArray("xs"));
 ```
 
 # JSONer
