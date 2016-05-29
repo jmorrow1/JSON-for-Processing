@@ -2,7 +2,7 @@
 Utilities to make saving and loading in Processing more convenient.
 
 # Code Reduction
-To save an array of floating points, xs, in Processing to a JSONObject, json, you would write something like:
+In Processing, to save an array of floating points, xs, to a JSONObject, json, you would write something like:
 
 ```java
 JSONArray js = new JSONArray();
