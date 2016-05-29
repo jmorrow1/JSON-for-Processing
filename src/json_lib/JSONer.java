@@ -13,14 +13,15 @@ import processing.data.JSONObject;
  *
  */
 
+//TODO: save and load arrays
 //TODO: order if-statements that check for field types by use frequency
 //TODO: go back and be more thoughtful about exception handling
 //ISSUE: if a subclass has a field of the same name as its superclass, only the superclass field gets saved. 
-//I know why this happens, but the question is what to do about it.
+//ISSUE: if a class extends a class from an external library, it can't be a JSONer so there needs to be a way for the user
+//       to incorporate such classes into the saving and loading process. Furthermore, even if the user defines their own
+//       class hierarchy but only wants some of the subclasses to extend JSONer, we'll have a problem.
 
 public abstract class JSONer implements JSONable {
-	private Field[] fields;
-	
 	public JSONer() {}
 	
 	public JSONer(JSONObject json) {
@@ -126,7 +127,7 @@ public abstract class JSONer implements JSONable {
 				}
 				else {
 					Object value = getValue(obj, fields[i]);
-					if (value != null) {
+					if (value != null && value instanceof JSONer) {
 						JSONObject nestedJSONObject = toJSON(value);
 						json.setJSONObject(fields[i].getName(), nestedJSONObject);
 					}
