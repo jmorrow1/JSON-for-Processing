@@ -33,6 +33,3 @@ With this library, you can instead write:
 ```java
 float[] xs = Util.toFloatArray(json.getJSONArray("xs"));
 ```
-
-# JSONer
-JSONer, a class in this library, is a more ambitious experiment in using reflection to automatically save the state of an object. It is a work in progress.
